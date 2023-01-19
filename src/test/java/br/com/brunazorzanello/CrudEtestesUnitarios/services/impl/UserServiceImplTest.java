@@ -3,6 +3,7 @@ package br.com.brunazorzanello.CrudEtestesUnitarios.services.impl;
 import br.com.brunazorzanello.CrudEtestesUnitarios.domain.Dto.UserDto;
 import br.com.brunazorzanello.CrudEtestesUnitarios.domain.User;
 import br.com.brunazorzanello.CrudEtestesUnitarios.repositorys.UserRepository;
+import br.com.brunazorzanello.CrudEtestesUnitarios.services.exception.ObjectNotFoundException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
@@ -26,6 +27,7 @@ class UserServiceImplTest {
     public static final String NAME = "Bruna";
     public static final String EMAIL = "bruna@gmail.com";
     public static final String PASSWORD = "1234";
+    public static final String OBJETO_NAO_ENCONTRADO = "Id não encontrado no banco de dados!";
     @InjectMocks
     private UserServiceImpl service;
     @Mock
@@ -53,6 +55,19 @@ class UserServiceImplTest {
         assertEquals(NAME, response.getName());
         assertEquals(EMAIL, response.getEmail());
     }
+
+    @Test
+    public void whenFindByIdThenReturnAnObjectNotFoundException(){
+        when(repository.findById(anyInt())).thenThrow(new ObjectNotFoundException(OBJETO_NAO_ENCONTRADO));
+
+        try{
+            service.findById(ID);
+        }catch (Exception e){
+            assertEquals(ObjectNotFoundException.class, e.getClass());
+            assertEquals(OBJETO_NAO_ENCONTRADO, e.getMessage());
+        }
+    }
+
 
     @Test
     void findAll() {
