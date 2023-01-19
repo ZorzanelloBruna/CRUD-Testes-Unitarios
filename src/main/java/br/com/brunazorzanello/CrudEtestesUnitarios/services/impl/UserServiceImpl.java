@@ -4,6 +4,7 @@ import br.com.brunazorzanello.CrudEtestesUnitarios.domain.Dto.UserDto;
 import br.com.brunazorzanello.CrudEtestesUnitarios.domain.User;
 import br.com.brunazorzanello.CrudEtestesUnitarios.repositorys.UserRepository;
 import br.com.brunazorzanello.CrudEtestesUnitarios.services.UserService;
+import br.com.brunazorzanello.CrudEtestesUnitarios.services.exception.DataIntegrateViolationException;
 import br.com.brunazorzanello.CrudEtestesUnitarios.services.exception.ObjectNotFoundException;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,6 +33,14 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public User create(UserDto userDto) {
+        findByEmail(userDto);
         return repository.save(mapper.map(userDto, User.class));
+    }
+
+    private void findByEmail(UserDto userDto){
+        Optional<User> user = repository.findByEmail(userDto.getEmail());
+        if (user.isPresent()){
+            throw new DataIntegrateViolationException("E-mail ja cadastrado em nosso sistema");
+        }
     }
 }
