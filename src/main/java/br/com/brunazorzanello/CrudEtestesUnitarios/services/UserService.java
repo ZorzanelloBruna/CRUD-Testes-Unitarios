@@ -1,5 +1,6 @@
 package br.com.brunazorzanello.CrudEtestesUnitarios.services;
 
+import br.com.brunazorzanello.CrudEtestesUnitarios.domain.Dto.UserDto;
 import br.com.brunazorzanello.CrudEtestesUnitarios.domain.User;
 
 import java.util.List;
@@ -7,4 +8,5 @@ import java.util.List;
 public interface UserService {
     User findById(Integer id);
     List<User> findAll();
+    User create (UserDto user);
 }
