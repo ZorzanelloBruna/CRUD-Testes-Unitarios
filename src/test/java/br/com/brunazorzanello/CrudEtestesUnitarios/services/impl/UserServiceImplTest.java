@@ -3,6 +3,7 @@ package br.com.brunazorzanello.CrudEtestesUnitarios.services.impl;
 import br.com.brunazorzanello.CrudEtestesUnitarios.domain.Dto.UserDto;
 import br.com.brunazorzanello.CrudEtestesUnitarios.domain.User;
 import br.com.brunazorzanello.CrudEtestesUnitarios.repositorys.UserRepository;
+import br.com.brunazorzanello.CrudEtestesUnitarios.services.exception.DataIntegrateViolationException;
 import br.com.brunazorzanello.CrudEtestesUnitarios.services.exception.ObjectNotFoundException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -18,8 +19,7 @@ import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyInt;
+import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.when;
 
 @SpringBootTest
@@ -60,12 +60,12 @@ class UserServiceImplTest {
     }
 
     @Test
-    public void whenFindByIdThenReturnAnObjectNotFoundException(){
+    public void whenFindByIdThenReturnAnObjectNotFoundException() {
         when(repository.findById(anyInt())).thenThrow(new ObjectNotFoundException(OBJETO_NAO_ENCONTRADO));
 
-        try{
+        try {
             service.findById(ID);
-        }catch (Exception e){
+        } catch (Exception e) {
             assertEquals(ObjectNotFoundException.class, e.getClass());
             assertEquals(OBJETO_NAO_ENCONTRADO, e.getMessage());
         }
@@ -75,10 +75,10 @@ class UserServiceImplTest {
     void whenFindAllThenReturnListOfThen() {
         when(repository.findAll()).thenReturn(List.of(user));
 
-        List<User>response= service.findAll();
+        List<User> response = service.findAll();
 
         assertNotNull(response);
-        assertEquals(1,response.size());
+        assertEquals(1, response.size());
         assertEquals(User.class, response.get(INDEX).getClass());
 
         assertEquals(ID, response.get(INDEX).getId());
@@ -99,6 +99,19 @@ class UserServiceImplTest {
         assertEquals(NAME, responde.getName());
         assertEquals(EMAIL, responde.getEmail());
         assertEquals(PASSWORD, responde.getPassword());
+    }
+
+    @Test
+    void whenCriateThenReturnDataIntegrityViolationException() {
+        when(repository.findByEmail(anyString())).thenReturn(userOptional);
+
+        try {
+            userOptional.get().setId(2);
+            service.create(userDto);
+        } catch (Exception e) {
+            assertEquals(DataIntegrateViolationException.class, e.getClass());
+            assertEquals("E-mail ja cadastrado em nosso sistema", e.getMessage());
+        }
     }
 
     @Test
