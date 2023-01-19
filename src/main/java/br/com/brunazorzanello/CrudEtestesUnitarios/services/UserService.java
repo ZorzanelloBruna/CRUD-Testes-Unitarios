@@ -8,5 +8,6 @@ import java.util.List;
 public interface UserService {
     User findById(Integer id);
     List<User> findAll();
-    User create (UserDto user);
+    User create (UserDto userDto);
+    User update (UserDto userDto);
 }
