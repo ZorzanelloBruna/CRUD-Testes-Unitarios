@@ -1,6 +1,5 @@
 package br.com.brunazorzanello.CrudEtestesUnitarios;
 
-import br.com.brunazorzanello.CrudEtestesUnitarios.domain.User;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
